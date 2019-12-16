@@ -15,12 +15,14 @@ function Intcode(raw_data, input, output) {
                 break
             case 3:
                 read()
-            case 3:
+                break
+            case 4:
                 write(opcode.direct_parameters)
+                break
             case 99:
                 return true
             default:
-                throw RangeError("Unknown opcode: " + opcode)
+                throw RangeError("Unknown command: " + opcode.command)
         }
     }
 
@@ -31,7 +33,7 @@ function Intcode(raw_data, input, output) {
         }
         return {
             command: result % 100,
-            direct_parameters: determine_direct_parameters(result / 100)
+            direct_parameters: determine_direct_parameters(Math.trunc(result / 100))
         }
     }
 
@@ -42,10 +44,10 @@ function Intcode(raw_data, input, output) {
                 break;
             } else if (mask % 10 === 1) {
                 result.add(parameter_index)
-            } else {
-                throw new RangeError('Corrupt mask value')
+            } else if (mask % 10 !== 0) {
+                throw RangeError('Corrupt mask value: ' + mask)
             }
-            mask /= 10
+            mask = Math.trunc(mask / 10)
         }
         return result
     }

@@ -13,4 +13,3 @@ function output(value) {
 let machine = intcode.Intcode_from_file('input.txt', input, output)
 machine.run()
 console.log(result)
-console.log(machine.result(0))
