@@ -1,16 +1,22 @@
-function Intcode(raw_data) {
+let fs = require('fs')
+
+function Intcode(raw_data, input, output) {
     let data = new Map()
     let index
 
     function step() {
         let opcode = read_opcode()
-        switch (opcode) {
+        switch (opcode.command) {
             case 1:
-                add()
+                add(opcode.direct_parameters)
                 break
             case 2:
-                multiply()
+                multiply(opcode.direct_parameters)
                 break
+            case 3:
+                read()
+            case 3:
+                write(opcode.direct_parameters)
             case 99:
                 return true
             default:
@@ -23,7 +29,6 @@ function Intcode(raw_data) {
         if (result === undefined) {
             throw RangeError("Index out of range: " + index)
         }
-        ]
         return {
             command: result % 100,
             direct_parameters: determine_direct_parameters(result / 100)
@@ -31,7 +36,7 @@ function Intcode(raw_data) {
     }
 
     function determine_direct_parameters(mask) {
-        let result = Set()
+        let result = new Set()
         for (let parameter_index = 1;; ++parameter_index) {
             if (mask < 1) {
                 break;
@@ -45,26 +50,47 @@ function Intcode(raw_data) {
         return result
     }
 
-    function add() {
-        binary_operation((lhs, rhs) => lhs + rhs)
+    function add(direct_parameters) {
+        binary_operation((lhs, rhs) => lhs + rhs, direct_parameters)
     }
 
-    function multiply() {
-        binary_operation((lhs, rhs) => lhs * rhs)
+    function multiply(direct_parameters) {
+        binary_operation((lhs, rhs) => lhs * rhs, direct_parameters)
     }
 
-    function binary_operation(raw_operation) {
-        let lhs_source = data.get(index + 1)
-        let rhs_source = data.get(index + 2)
-        let result = raw_operation(data.get(lhs_source), data.get(rhs_source))
+    function binary_operation(raw_operation, direct_parameters) {
+        let lhs = get(1, direct_parameters)
+        let rhs = get(2, direct_parameters)
+        let result = raw_operation(lhs, rhs)
         let target = data.get(index + 3)
         data.set(target, result)
         index += 4
     }
 
-    function read_data() {
-        let raw_data = read_raw_data()
-        build_data(raw_data)
+    function read() {
+        let value = input()
+        set(1, value)
+        index += 2
+    }
+
+    function write(direct_parameters) {
+        let value = get(1, direct_parameters)
+        output(value)
+        index += 2
+    }
+
+    function get(offset, direct_parameters) {
+        if (direct_parameters.has(offset)) {
+            return data.get(index + offset)
+        } else {
+            let source_address = data.get(index + offset)
+            return data.get(source_address)
+        }
+    }
+
+    function set(offset, value) {
+        let target_address = data.get(index + offset)
+        data.set(target_address, value)
     }
 
     function build_data() {
@@ -93,9 +119,9 @@ function Intcode(raw_data) {
 
 exports.Intcode = Intcode
 
-exports.Intcode_from_file = function(path) {
-    let raw_data = fs.readFileSync('input.txt', 'utf8')
+exports.Intcode_from_file = function(path, input, output) {
+    let raw_data = fs.readFileSync(path, 'utf8')
         .split(',')
         .map(line => Number(line))
-    return Intcode(raw_data)
+    return Intcode(raw_data, input, output)
 }
