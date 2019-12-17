@@ -3,14 +3,13 @@ let intcode = require('../intcode/intcode')
 
 let create_machine = (input, output) => new intcode.Intcode_from_file('input.txt', input, output)
 
-function value_for_configuration(configuration) {
-    let phase_settings = phase_settings_for_configuration(configuration)
+function value_for_configuration(phase_settings) {
     let result = 0
     for (let index = 0; index < 5; ++index) {
         let input = [phase_settings[index], result]
         create_machine(
             () => {
-                let result = input.shift()
+                return input.shift()
             },
             value => (result = value))
             .run()
@@ -27,6 +26,24 @@ function phase_settings_for_configuration(configuration) {
     return result;
 }
 
+let maximum = 0
+let maximum_phase_settings
+
 for (let configuration = 0; configuration < Math.pow(5, 5); ++configuration) {
-    console.log(value_for_configuration(configuration))
+    let phase_settings = phase_settings_for_configuration(configuration)
+    if (!unique_phases(phase_settings)) {
+        continue
+    }
+    let result = value_for_configuration(phase_settings)
+    if (result > maximum) {
+        maximum = result
+        maximum_phase_settings = phase_settings
+    }
 }
+
+function unique_phases(phase_settings) {
+    let set = new Set(phase_settings)
+    return set.size === 5
+}
+
+console.log('Maximum: ' + maximum + ' for phase settings ' + maximum_phase_settings)
