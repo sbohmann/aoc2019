@@ -2,7 +2,7 @@ let fs = require('fs')
 
 function Intcode(raw_data, input, output) {
     let data = new Map()
-    let index
+    let index = 0
 
     function step() {
         let opcode = read_opcode()
@@ -83,6 +83,9 @@ function Intcode(raw_data, input, output) {
 
     function read() {
         let value = input()
+        if (!Number.isInteger(value)) {
+            throw Error('Input yielded non-integer valuen [' + value + ']')
+        }
         set(1, value)
         index += 2
     }
@@ -128,12 +131,23 @@ function Intcode(raw_data, input, output) {
     }
 
     function get(offset, direct_parameters) {
+        let result
         if (direct_parameters.has(offset)) {
-            return data.get(index + offset)
+            result = data.get(index + offset)
+            if (result === undefined) {
+                throw Error('get: address out of bounds: ' + index + offset)
+            }
         } else {
             let source_address = data.get(index + offset)
-            return data.get(source_address)
+            if (source_address === undefined) {
+                throw Error('get: address of source address out of bounds: ' + index + offset)
+            }
+            result = data.get(source_address)
+            if (result === undefined) {
+                throw Error('get: source address out of bounds: ' + source_address)
+            }
         }
+        return result
     }
 
     function set(offset, value) {
@@ -146,7 +160,6 @@ function Intcode(raw_data, input, output) {
         for (let index = 0; index < raw_data.length; ++index) {
             data.set(index, raw_data[index])
         }
-        index = 0
     }
 
     build_data()
