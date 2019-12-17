@@ -19,6 +19,18 @@ function Intcode(raw_data, input, output) {
             case 4:
                 write(opcode.direct_parameters)
                 break
+            case 5:
+                jump_if_true(opcode.direct_parameters)
+                break;
+            case 6:
+                jump_if_false(opcode.direct_parameters)
+                break;
+            case 7:
+                less_than(opcode.direct_parameters)
+                break;
+            case 8:
+                equals(opcode.direct_parameters)
+                break;
             case 99:
                 return true
             default:
@@ -79,6 +91,40 @@ function Intcode(raw_data, input, output) {
         let value = get(1, direct_parameters)
         output(value)
         index += 2
+    }
+
+    function jump_if_true(direct_parameters) {
+        let cond = get(1, direct_parameters)
+        if (cond !== 0) {
+            index = get(2, direct_parameters)
+        } else {
+            index += 3
+        }
+    }
+
+    function jump_if_false(direct_parameters) {
+        let cond = get(1, direct_parameters)
+        if (cond === 0) {
+            index = get(2, direct_parameters)
+        } else {
+            index += 3
+        }
+    }
+
+    function less_than(direct_parameters) {
+        let lhs = get(1, direct_parameters)
+        let rhs = get(2, direct_parameters)
+        result = (lhs < rhs)
+        set(3, result ? 1 : 0)
+        index += 4
+    }
+
+    function equals(direct_parameters) {
+        let lhs = get(1, direct_parameters)
+        let rhs = get(2, direct_parameters)
+        result = (lhs === rhs)
+        set(3, result ? 1 : 0)
+        index += 4
     }
 
     function get(offset, direct_parameters) {
