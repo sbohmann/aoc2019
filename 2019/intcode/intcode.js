@@ -3,6 +3,7 @@ let fs = require('fs')
 function Intcode(raw_data, input, output) {
     let data = new Map()
     let index = 0
+    let halted = false
 
     function step() {
         let opcode = read_opcode()
@@ -32,6 +33,7 @@ function Intcode(raw_data, input, output) {
                 equals(opcode.direct_parameters)
                 break;
             case 99:
+                halted = true
                 return true
             default:
                 throw RangeError("Unknown command: " + opcode.command)
@@ -174,7 +176,8 @@ function Intcode(raw_data, input, output) {
         },
         result: function(index) {
             return data.get(index)
-        }
+        },
+        halted: () => { return halted }
     }
 }
 
