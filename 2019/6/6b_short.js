@@ -11,7 +11,6 @@ function add_neighbor(body, neighbor) {
 
 fs.readFileSync('input.txt', 'utf8')
     .split('\n')
-    .filter(line => line.length !== 0)
     .forEach(line => {
         let split = line.split(')')
         bodies.add(split[1])
