@@ -14,20 +14,7 @@ function value_for_configuration(phase_settings) {
             },
             value => (result = value)))
     }
-    let all_machines_halted = false
-    while (!all_machines_halted) {
-        all_machines_halted = true
-        for (let index = 0; index < 5; ++index) {
-            let machine = machines[index]
-            machine.run()
-            if (!machine.halted()) {
-                machine.run()
-            }
-            if (!machine.halted()) {
-                all_machines_halted = false;
-            }
-        }
-    }
+    // TODO run machines as coroutines
     return result
 }
 
