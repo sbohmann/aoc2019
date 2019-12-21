@@ -172,6 +172,7 @@ function Intcode(raw_data, input, output) {
                 }
             }
         },
+        step: step,
         result: function(index) {
             return data.get(index)
         }

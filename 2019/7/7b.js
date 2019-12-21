@@ -6,22 +6,51 @@ let create_machine = (input, output) => new intcode.Intcode_from_file('input.txt
 function value_for_configuration(phase_settings) {
     let result = 0
     let machines = []
+    let input = []
+    let output = null
     for (let index = 0; index < 5; ++index) {
-        let input = [phase_settings[index], result]
+        input[index] = [phase_settings[index]]
+        if (index === 0) {
+            input[index].push(result)
+        }
         machines.push(create_machine(
             () => {
-                return input.shift()
+                if (input[index].length === 0) {
+                    throw Error('No input value available')
+                }
+                return input[index].shift()
             },
-            value => (result = value)))
+            value => {
+                output = value
+            }))
     }
-    // TODO run machines as coroutines
+    let current_machine_index = 0
+    while (true) {
+        let machine = machines[current_machine_index]
+        if (machine === null) {
+            break;
+        }
+        let halted = machine.step()
+        if (halted) {
+            machines[current_machine_index] = null
+        }
+        if (output !== null) {
+            result = output
+            console.log(output)
+            current_machine_index = (current_machine_index + 1) % 5
+            input[current_machine_index].push(output)
+            output = null
+        } else if (halted) {
+            current_machine_index = (current_machine_index + 1) % 5
+        }
+    }
     return result
 }
 
 function phase_settings_for_configuration(configuration) {
     let result = []
     for (let index = 0; index < 5; ++index) {
-        result.push(configuration % 5)
+        result.push(configuration % 5 + 5)
         configuration = Math.trunc(configuration / 5)
     }
     return result;
@@ -35,6 +64,7 @@ for (let configuration = 0; configuration < Math.pow(5, 5); ++configuration) {
     if (!unique_phases(phase_settings)) {
         continue
     }
+    console.log(phase_settings)
     let result = value_for_configuration(phase_settings)
     if (result > maximum) {
         maximum = result
