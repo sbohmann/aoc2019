@@ -23,21 +23,16 @@ for (let y = 0; y < height; ++y) {
         throw Error()
     }
     for (let x = 0; x < width; ++x) {
-        set(x, y, lines[y][x] === '#')
+        if (lines[y][x] === '#') {
+            set(x, y, lines[y][x] === '#')
+        }
     }
 }
 
-function angle(dx, dy) {
-    if (dx === 0 && dy === 0) {
-        throw Error()
-    } else if (dx === 0) {
-        return '0,' + Math.sign(dy)
-    } else if (dy === 0) {
-        return Math.sign(dx) + ',0'
-    }
-    let maximum = Math.trunc(Math.min(Math.abs(dx), Math.abs(dy)) / 2)
+function calculate_angle(dx, dy) {
+    let maximum = Math.max(Math.abs(dx), Math.abs(dy))
     for (let factor = 2; factor <= maximum; ++factor) {
-        if (dx % factor === 0 && dy % factor === 0) {
+        while (dx % factor === 0 && dy % factor === 0) {
             dx /= factor
             dy /= factor
             if (!Number.isInteger(dx) || !Number.isInteger(dy)) {
@@ -52,13 +47,13 @@ function visible_asteroids(xpos, ypos) {
     let angles = new Set()
     for (let y = 0; y < height; ++y) {
         for (let x = 0; x < width; ++x) {
-            if (x === xpos && y === ypos) {
+            if (x === xpos && y === ypos || !get(x, y)) {
                 continue
             }
-            angles.add(angle(x - xpos, y - ypos))
+            angles.add(calculate_angle(x - xpos, y - ypos))
         }
     }
-    return angles.size
+    return angles
 }
 
 let maximum_visible_asteroids
@@ -66,13 +61,16 @@ let optimal_coordinates
 
 for (let y = 0; y < height; ++y) {
     for (let x = 0; x < width; ++x) {
-        let result = visible_asteroids(x, y)
-        if (maximum_visible_asteroids === undefined || result > maximum_visible_asteroids) {
-            maximum_visible_asteroids = result
-            optimal_coordinates = {x: x, y: y}
+        if (get(x, y)) {
+            let result = visible_asteroids(x, y)
+            if (maximum_visible_asteroids === undefined || result.size > maximum_visible_asteroids) {
+                maximum_visible_asteroids = result.size
+                optimal_coordinates = {x: x, y: y}
+            }
         }
     }
 }
 
 console.log(maximum_visible_asteroids)
+console.log(maximum_visible_asteroids.size)
 console.log(optimal_coordinates)
