@@ -40,7 +40,10 @@ function calculate_angle(dx, dy) {
             }
         }
     }
-    return dx + ',' + dy
+    return {
+        dx: dx,
+        dy: dy
+    }
 }
 
 function visible_asteroids(xpos, ypos) {
@@ -50,27 +53,93 @@ function visible_asteroids(xpos, ypos) {
             if (x === xpos && y === ypos || !get(x, y)) {
                 continue
             }
-            angles.add(calculate_angle(x - xpos, y - ypos))
+            let angle = calculate_angle(x - xpos, y - ypos)
+            angles.add(angle.dx + ',' + angle.dy)
         }
     }
     return angles
 }
 
 let maximum_visible_asteroids
-let optimal_coordinates
+let center
 
 for (let y = 0; y < height; ++y) {
     for (let x = 0; x < width; ++x) {
         if (get(x, y)) {
             let result = visible_asteroids(x, y)
-            if (maximum_visible_asteroids === undefined || result.size > maximum_visible_asteroids) {
-                maximum_visible_asteroids = result.size
-                optimal_coordinates = {x: x, y: y}
+            if (maximum_visible_asteroids === undefined || result.size > maximum_visible_asteroids.size) {
+                maximum_visible_asteroids = result
+                center = {x: x, y: y}
             }
         }
     }
 }
 
-console.log(maximum_visible_asteroids)
 console.log(maximum_visible_asteroids.size)
-console.log(optimal_coordinates)
+console.log(center)
+
+let directions = []
+let added_directions = new Set()
+let positions = new Map()
+
+function create_position(x, y) {
+    let delta_x = x - center.x
+    let delta_y = y - center.y
+    let angle = calculate_angle(delta_x, delta_y)
+    let theta = Math.atan2(angle.dx, -angle.dy)
+    if (theta < 0) {
+        theta += 2 * Math.PI
+    }
+    return {
+        theta: theta,
+        distance: Math.abs(delta_x + delta_y),
+        x: x,
+        y: y
+    }
+}
+
+function add_position(position) {
+    let list = positions.get(position.theta)
+    if (list === undefined) {
+        list = [position]
+    } else {
+        list.push(position)
+    }
+    positions.set(position.theta, list)
+}
+
+for (let y = 0; y < height; ++y) {
+    for (let x = 0; x < width; ++x) {
+        if ((x !== center.x || y !== center.y) && get(x, y)) {
+            let position = create_position(x, y)
+            add_position(position)
+            if (!added_directions.has(position.theta)) {
+                directions.push(position.theta)
+                added_directions.add(position.theta)
+            }
+        }
+    }
+}
+
+directions.sort((a, b) => a - b)
+
+for (let theta of directions) {
+    positions.get(theta).sort((a, b) => a.distance - b.distance)
+}
+
+let index = 0
+let result
+for (let round = 1; round <= 200; ++round) {
+    while (true) {
+        let theta = directions[index]
+        ++index
+        let list = positions.get(theta)
+        if (list.size !== 0) {
+            result = list.shift()
+            console.log(result)
+            break
+        }
+    }
+}
+
+console.log(result)
