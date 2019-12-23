@@ -72,9 +72,9 @@ function b() {
 
     const coordinates = ['x', 'y', 'z']
     let states_for_coordinate = {
-        'x': new Set(),
-        'y': new Set(),
-        'z': new Set()
+        'x': new Map(),
+        'y': new Map(),
+        'z': new Map()
     }
     let missing = new Set(coordinates)
     let period_for_coordinate = new Map()
@@ -98,19 +98,27 @@ function b() {
         if (missing.has(coordinate)) {
             let states = states_for_coordinate[coordinate]
             let state = build_state(coordinate)
-            if (states.has(state)) {
+            let period_start = states.get(state)
+            if (period_start !== undefined) {
+                let period = rounds - period_start
                 console.log(coordinate + ' state ' + state)
-                console.log('Reached after ' + rounds + ' rounds')
+                console.log('first reached Reached after ' + period_start + ' rounds')
+                console.log('reached again after ' + rounds + ' rounds')
+                console.log('with a period of ' + period + ' rounds')
                 missing.delete(coordinate)
-                period_for_coordinate.set(coordinate, rounds)
+                period_for_coordinate.set(coordinate, period)
+            } else {
+                states.set(state, rounds)
             }
-            states.add(state)
         }
     }
 
     for (let index = 0; missing.size > 0; ++index) {
         adjust_velocities()
         adjust_positions()
+        if (index === 0) {
+            moons.forEach(moon => console.log(moon))
+        }
         coordinates.forEach(coordinate => handle_state(coordinate, index + 1))
     }
 
@@ -118,25 +126,9 @@ function b() {
 
     console.log(periods)
 
-    let maximum_denominator = Math.trunc(periods.reduce((previous, current) => Math.max(previous, current)) / 2)
-    function divides_all(n) {
-        for (let value of periods) {
-            if (value % n !== 0) {
-                return false
-            }
-        }
-        return true
-    }
-
-    for (let n = 2; n < maximum_denominator; ++n) {
-        while (divides_all(n)) {
-            periods = periods.map(value => value / n)
-        }
-    }
-
     console.log(periods)
-    let least_common_multiple = periods.reduce((previous, current) => previous * current)
-    periods.forEach(value => console.log(least_common_multiple / value))
+    let least_common_multiple = 271442326847376 // calculated externally from the periods ^^
+    periods.forEach(value => console.log(least_common_multiple % value))
     console.log(least_common_multiple)
 }
 
