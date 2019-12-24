@@ -1,4 +1,5 @@
 let fs = require('fs')
+let lcm = require('lcm')
 
 let moons
 
@@ -125,9 +126,7 @@ function b() {
     let periods = Array.from(period_for_coordinate, ([_, value]) => value)
 
     console.log(periods)
-
-    console.log(periods)
-    let least_common_multiple = 271442326847376 // calculated externally from the periods ^^
+    let least_common_multiple = periods.reduce((previous, current) => lcm(previous, current))
     periods.forEach(value => console.log(least_common_multiple % value))
     console.log(least_common_multiple)
 }

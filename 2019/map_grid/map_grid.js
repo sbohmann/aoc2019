@@ -40,15 +40,32 @@ exports.MapGrid = (default_value) => {
         extend_bounds(position.x, position.y)
     }
 
+    function create_line(y, value_to_character) {
+        let line = ''
+        for (let x = bounds.minx; x <= bounds.maxx; ++x) {
+            line += value_to_character(get({x: x, y: y}))
+        }
+        return line
+    }
+
+    function to_text(value_to_character) {
+        if (value_to_character === undefined) {
+            value_to_character = value => value
+        }
+        result = []
+        for (let y = bounds.miny; y <= bounds.maxy; ++y) {
+            let line = create_line(y, value_to_character)
+            result.push(line)
+        }
+        return result
+    }
+
     function write_to_console(value_to_character) {
         if (value_to_character === undefined) {
             value_to_character = value => value
         }
         for (let y = bounds.miny; y <= bounds.maxy; ++y) {
-            let line = ''
-            for (let x = bounds.minx; x <= bounds.maxx; ++x) {
-                line += value_to_character(get({x: x, y: y}))
-            }
+            let line = create_line(y, value_to_character)
             console.log(line)
         }
     }
@@ -57,6 +74,7 @@ exports.MapGrid = (default_value) => {
         get: get,
         set: set,
         write_to_console: write_to_console,
+        to_text: to_text,
         bounds: bounds,
         painted: painted
     }

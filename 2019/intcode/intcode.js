@@ -196,6 +196,12 @@ function Intcode(raw_data, input, output) {
         step: step,
         result: function(index) {
             return data.get(index)
+        },
+        memset: (address, value) => {
+            if (!Number.isInteger(value)) {
+                throw Error('Illegal value [' + value + ']')
+            }
+            data.set(index, value)
         }
     }
 }
