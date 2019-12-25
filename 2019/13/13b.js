@@ -1,17 +1,18 @@
-const { app, BrowserWindow } = require('electron')
+const electron = require('electron')
 
 function createWindow () {
     // Create the browser window.
-    let win = new BrowserWindow({
+    let win = new electron.BrowserWindow({
         width: 800,
-        height: 600,
+        height: 1000,
         webPreferences: {
             nodeIntegration: true
         }
     })
 
-    // and load the index.html of the app.
+    electron.globalShortcut.register('escape', () => win.reload())
+
     win.loadFile('index.html')
 }
 
-app.on('ready', createWindow)
+electron.app.on('ready', createWindow)
