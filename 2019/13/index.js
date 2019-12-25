@@ -36,13 +36,13 @@ window.onload = () => {
     }, 0)
     setInterval(() => text.nodeValue = game.grid.to_text(game.value_to_character)
         .reduce((previous, current) => previous + '\n' + current), 1000)
-    let keything = document.createElement('h1')
-    let keythingtext = document.createTextNode('')
-    keything.appendChild(keythingtext)
-    keythingtext.nodeValue = 'Bla'
-    document.body.appendChild(keything)
+    let key_thing = document.createElement('h1')
+    let key_thing_text = document.createTextNode('')
+    key_thing.appendChild(key_thing_text)
+    key_thing_text.nodeValue = 'Bla'
+    document.body.appendChild(key_thing)
     window.onkeydown = (event) => {
-        keythingtext.nodeValue = event.key
+        key_thing_text.nodeValue = event.key
         switch (event.key) {
             case 'ArrowLeft':
                 input.push(-1)
