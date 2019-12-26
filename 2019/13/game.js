@@ -51,7 +51,7 @@ exports.value_to_character = value => {
         case 1:
             return '█'
         case 2:
-            return '▒'
+            return 'X'//'▒'
         case 3:
             return '='
         case 4:
