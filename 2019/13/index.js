@@ -1,8 +1,53 @@
 let game = require('./game')
 let input = []
+let auto = false
+let ball_position
+let ball_velocity
+let paddle_position
+
+function for_delta(action) {
+    let steps = Math.trunc((Math.abs(paddle_position - ball_position) + 2) / 3)
+    for (let index = 0; index < steps; ++index) {
+        action()
+    }
+}
+
+function move(delta) {
+    input.push(delta)
+    paddle_position += delta
+}
 
 function handle_output(x, y, value) {
-    console.log(x, y, value)
+    if (value === 4) {
+        if (ball_position !== undefined) {
+            ball_velocity = x - ball_position
+        }
+        ball_position = x
+    }
+    if (value === 3 && paddle_position === undefined) {
+        paddle_position = x
+    }
+    if (auto && ball_position !== undefined && ball_velocity !== undefined && (value === 3 || value === 4)) {
+        if (paddle_position > ball_position + 1) {
+            if (ball_velocity < 0) {
+                for_delta(() => move(-1))
+            } else {
+                move(-1)
+            }
+        } else if (paddle_position < ball_position - 1) {
+            if (ball_velocity > 0) {
+                for_delta(() => move(1))
+            } else {
+                move(1)
+            }
+        } else if (paddle_position === ball_position) {
+            if (ball_velocity < 0) {
+                move(-1)
+            } else if (ball_velocity > 0) {
+                move(1)
+            }
+        }
+    }
 }
 
 function provide_input() {
@@ -45,16 +90,20 @@ window.onload = () => {
         key_thing_text.nodeValue = event.key
         switch (event.key) {
             case 'ArrowLeft':
-                input.push(-1)
+                move(-1)
                 break
             case 'ArrowRight':
-                input.push(1)
+                move(1)
                 break
             case 'ArrowUp':
                 rounds = 100
                 break
             case 'ArrowDown':
-                rounds = 5
+                rounds = 1
+                break
+            case 'a':
+            case 'A':
+                auto = !auto
                 break
         }
     }
