@@ -17,17 +17,25 @@ function move(delta) {
     paddle_position += delta
 }
 
+function is_ball(value) {
+    return value === 4
+}
+
+function is_paddle(value) {
+    return value === 3
+}
+
 function handle_output(x, y, value) {
-    if (value === 4) {
+    if (is_ball(value)) {
         if (ball_position !== undefined) {
             ball_velocity = x - ball_position
         }
         ball_position = x
     }
-    if (value === 3 && paddle_position === undefined) {
+    if (is_paddle(value) && paddle_position === undefined) {
         paddle_position = x
     }
-    if (auto && ball_position !== undefined && ball_velocity !== undefined && (value === 3 || value === 4)) {
+    if (auto && ball_position !== undefined && ball_velocity !== undefined && (is_paddle(value) || is_ball(value))) {
         if (paddle_position > ball_position + 1) {
             if (ball_velocity < 0) {
                 for_delta(() => move(-1))
