@@ -3,10 +3,14 @@ let input = []
 let auto = false
 let ball_position
 let ball_velocity
-let paddle_position
+let paddle_x
+let rounds = 0
+let max_y = 0
+let initialized = false
 
 function for_delta(action) {
-    let steps = Math.trunc((Math.abs(paddle_position - ball_position) + 2) / 3)
+    // let steps = Math.trunc((Math.abs(paddle_position - ball_position) + 2) / 3)
+    let steps = 1
     for (let index = 0; index < steps; ++index) {
         action()
     }
@@ -14,7 +18,8 @@ function for_delta(action) {
 
 function move(delta) {
     input.push(delta)
-    paddle_position += delta
+    paddle_x += delta
+    console.log('move ' + delta)
 }
 
 function is_ball(value) {
@@ -26,35 +31,47 @@ function is_paddle(value) {
 }
 
 function handle_output(x, y, value) {
+    if (!initialized) {
+        if (y > max_y) {
+            max_y = y
+        } else if (y < max_y) {
+            rounds = 0
+            initialized = true
+        }
+    }
     if (is_ball(value)) {
         if (ball_position !== undefined) {
-            ball_velocity = x - ball_position
+            ball_velocity = x - ball_position.x
         }
-        ball_position = x
+        ball_position = {x:x, y:y}
     }
-    if (is_paddle(value) && paddle_position === undefined) {
-        paddle_position = x
+    // if (game.grid.get())
+    if (is_paddle(value) && paddle_x === undefined) {
+        paddle_x = x
     }
     if (auto && ball_position !== undefined && ball_velocity !== undefined && (is_paddle(value) || is_ball(value))) {
-        if (paddle_position > ball_position + 1) {
+        if (paddle_x > ball_position.x) {
             if (ball_velocity < 0) {
                 for_delta(() => move(-1))
             } else {
                 move(-1)
             }
-        } else if (paddle_position < ball_position - 1) {
+        } else if (paddle_x < ball_position.x) {
             if (ball_velocity > 0) {
                 for_delta(() => move(1))
             } else {
                 move(1)
             }
-        } else if (paddle_position === ball_position) {
-            if (ball_velocity < 0) {
-                move(-1)
-            } else if (ball_velocity > 0) {
-                move(1)
-            }
+        } else if (paddle_x === ball_position.x) {
+            // if (ball_velocity < 0) {
+            //     move(-1)
+            // } else if (ball_velocity > 0) {
+            //     move(1)
+            // }
         }
+    }
+    if ((is_paddle(value) || is_ball(value)) && rounds === 1) {
+        rounds = 0
     }
 }
 
@@ -78,7 +95,6 @@ window.onload = () => {
     let score = document.querySelector('#score')
     let score_text = document.createTextNode('')
     score.appendChild(score_text)
-    let rounds = 0
     setInterval(() => {
         for (let index = 0; index < rounds; ++index) {
             game.step()
@@ -107,6 +123,9 @@ window.onload = () => {
                 rounds = 100
                 break
             case 'ArrowDown':
+                rounds = 0
+                break
+            case ' ':
                 rounds = 1
                 break
             case 'a':
