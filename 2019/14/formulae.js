@@ -33,12 +33,13 @@ let productions = new Map()
 
 formulae.forEach(formula => {
     productions.set(formula.output.element, {
-        number_produced: formula.output.number,
+        quantity_produced: formula.output.number,
         input: formula.input
     })
 })
 
 exports.formulae = formulae
+exports.productions = productions
 exports.print_productions = () => {
     for (let production of productions.entries()) {
         console.log(production[0])
