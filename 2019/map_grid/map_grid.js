@@ -25,6 +25,9 @@ exports.MapGrid = (default_value) => {
     }
 
     function create_key(position) {
+        if (!Number.isInteger(position.x) || !Number.isInteger(position.y)) {
+            throw Error('Illegal position [' + position.x + '/' + position.y + ']');
+        }
         return position.x + ',' + position.y
     }
 
@@ -75,6 +78,7 @@ exports.MapGrid = (default_value) => {
         set: set,
         write_to_console: write_to_console,
         to_text: to_text,
+        create_key: create_key,
         bounds: bounds,
         painted: painted
     }
