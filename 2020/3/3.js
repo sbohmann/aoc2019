@@ -1,4 +1,4 @@
-import fs from 'fs'
+import {readLines} from '../../common/io.js'
 import Map from './map.js'
 
 // let lines = [
@@ -15,18 +15,36 @@ import Map from './map.js'
 //     '.#..#...#.#.#..#...#.#.#..#...#.#.#..#...#.#.#..#...#.#.#..#...#.#'
 // ]
 
-let lines = fs.readFileSync('input.txt', 'utf8')
-    .split('\n')
-    .map(line => line.trim())
-    .filter(line => line.length > 0)
+let lines = readLines('input.txt')
 
 let map = Map(lines)
 
-let sum = 0
-for (let y = 0; y < map.height; ++y) {
-    if (map.tree(3 * y, y)) {
-        ++sum
+function solveA() {
+    let result = 0
+    for (let y = 0; y < map.height; ++y) {
+        if (map.tree(3 * y, y)) {
+            ++result
+        }
     }
+    return result
 }
 
-console.log(sum)
+console.log('a:', solveA())
+
+function solveB() {
+    let result = []
+    let slopes = [[1, 1], [3, 1], [5, 1], [7, 1], [1, 2]]
+    slopes.forEach(slope => {
+        const [dx, dy] = slope
+        let sum = 0
+        for (let x = 0, y = 0; y < map.height; x += dx, y += dy) {
+            if (map.tree(x, y)) {
+                ++sum
+            }
+        }
+        result.push(sum)
+    })
+    return result.reduce((lhs, rhs) => lhs * rhs)
+}
+
+console.log('b:', solveB())

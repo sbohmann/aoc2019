@@ -1,8 +1,8 @@
-import fs from 'fs'
+import {readLines} from '../../common/io.js'
 
 function solve() {
     let input = readInput()
-    let result
+    let result = undefined
     forEachPair(input, (lhs, rhs) => {
         if (lhs + rhs === 2020) {
             if (result) {
@@ -15,10 +15,8 @@ function solve() {
 }
 
 function readInput() {
-    return fs
-        .readFileSync('input.txt', 'utf8')
-        .split('\n')
-        .map(line => Number(line.trim()))
+    return readLines('input.txt')
+        .map(Number)
 }
 
 function forEachPair(data, action) {

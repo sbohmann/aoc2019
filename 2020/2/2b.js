@@ -1,11 +1,8 @@
-import fs from 'fs'
+import {readLines} from '../../common/io.js'
 
 function solve() {
     // let result = ['1-3 a: abcde', '1-3 b: cdefg', '2-9 c: ccccccccc']
-    let result = fs.readFileSync('input.txt', 'utf8')
-        .split('\n')
-        .map(line => line.trim())
-        .filter(line => line.length > 0)
+    let result = readLines('input.txt')
         .map(parse)
         .reduce(
             (count, line) =>
