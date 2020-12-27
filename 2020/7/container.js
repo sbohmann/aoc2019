@@ -1,9 +1,11 @@
 const containerPattern = () => /(\w+ \w+) bags contain (no other bags)?/
 const containedPattern = () => /(\d+) (\w+ \w+) (bags?)/
 
-export default function Relation(line) {
+export default function Container(line) {
     let containerColor
     let contained
+
+    let knownContainedColors = new Set()
 
     function read() {
         let containerMatch = matchContainerPart()
@@ -48,7 +50,7 @@ export default function Relation(line) {
     function readContainedColor(input) {
         let match = matchContainedPart(input)
         let number = Number(match[1])
-        let color = match[2]
+        let color = distinctColor(match[2])
         checkContainedDeclension(number, match[3], input, match)
         return {
             number,
@@ -62,6 +64,14 @@ export default function Relation(line) {
             throw new Error('Illegal contained part [' + input + ']')
         }
         return result
+    }
+
+    function distinctColor(color) {
+        if (knownContainedColors.has(color)) {
+            throw new Error("Double occurrence of color [" + color + "] in input line [" + line + "]")
+        }
+        knownContainedColors.add(color)
+        return color
     }
 
     function checkContainedDeclension(number, declension, input, match) {
