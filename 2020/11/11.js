@@ -13,32 +13,36 @@ function parseLine(line) {
     ++height
     return Array.from(line).map(character => {
         switch (character) {
-            case '.': return floor
-            case 'L': return empty
-            case '#': return occupied
-            default: throw new Error(character)
+            case '.':
+                return floor
+            case 'L':
+                return empty
+            case '#':
+                return occupied
+            default:
+                throw new Error(character)
         }
     })
 }
 
-function solve(countNeightbors) {
-    let grid = [
-        'L.LL.LL.LL',
-        'LLLLLLL.LL',
-        'L.L.L..L..',
-        'LLLL.LL.LL',
-        'L.LL.LL.LL',
-        'L.LLLLL.LL',
-        '..L.L.....',
-        'LLLLLLLLLL',
-        'L.LLLLLL.L',
-        'L.LLLLL.LL'
-    ].flatMap(parseLine)
-    let visual = true
+function solve(context, createCountNeighbors, neighborThreshold, outputOffset) {
+    // let grid = [
+    //     'L.LL.LL.LL',
+    //     'LLLLLLL.LL',
+    //     'L.L.L..L..',
+    //     'LLLL.LL.LL',
+    //     'L.LL.LL.LL',
+    //     'L.LLLLL.LL',
+    //     '..L.L.....',
+    //     'LLLLLLLLLL',
+    //     'L.LLLLLL.L',
+    //     'L.LLLLL.LL'
+    // ].flatMap(parseLine)
+    // let visual = true
 
-    // let grid = readLines('input.txt')
-    //     .flatMap(parseLine)
-    // let visual = false
+    let grid = readLines('input.txt')
+        .flatMap(parseLine)
+    let visual = false
 
     let buffer = Array.from(grid)
     buffer.modified = false
@@ -54,6 +58,8 @@ function solve(countNeightbors) {
         grid.splice(0, grid.length, ...buffer)
         buffer.modified = false
     }
+
+    let countNeighbors = createCountNeighbors(grid)
 
     function print() {
         if (!visual) return
@@ -85,8 +91,8 @@ function solve(countNeightbors) {
             print()
             next()
         } else {
-            term.moveTo(1, height + 2)
-            term.white('A: ', grid.reduce((sum, value) => (value === occupied ? sum + 1 : sum), 0), '\n')
+            term.moveTo(1, height + outputOffset)
+            term.white(context + ': ', grid.reduce((sum, value) => (value === occupied ? sum + 1 : sum), 0), '\n')
         }
     }
 
@@ -96,7 +102,7 @@ function solve(countNeightbors) {
                 let neighbors = countNeighbors(x, y)
                 if (grid.get(x, y) === empty && neighbors === 0) {
                     buffer.set(x, y, occupied)
-                } else if (grid.get(x, y) === occupied && neighbors >= 4) {
+                } else if (grid.get(x, y) === occupied && neighbors >= neighborThreshold) {
                     buffer.set(x, y, empty)
                 }
             }
@@ -110,18 +116,49 @@ function solve(countNeightbors) {
     next()
 }
 
-function countImmediateNeighbors(centerX, centerY) {
-    let result = 0
-    for (let x = centerX - 1; x <= centerX + 1; ++x) {
-        for (let y = centerY - 1; y <= centerY + 1; ++y) {
-            let outOfCenter = x !== centerX || y !== centerY
-            let insideGrid = x >= 0 && x < width && y >= 0 && y < height
-            if (outOfCenter && insideGrid && grid.get(x, y) === occupied) {
-                ++result
+function countImmediateNeighbors(grid) {
+    return function (centerX, centerY) {
+        let result = 0
+        for (let x = centerX - 1; x <= centerX + 1; ++x) {
+            for (let y = centerY - 1; y <= centerY + 1; ++y) {
+                let outOfCenter = x !== centerX || y !== centerY
+                let insideGrid = x >= 0 && x < width && y >= 0 && y < height
+                if (outOfCenter && insideGrid && grid.get(x, y) === occupied) {
+                    ++result
+                }
             }
         }
+        return result
     }
-    return result
 }
 
-solve('A:', countImmediateNeighbors())
+function countVisibleNeighbors(grid) {
+    const directions = [[1, 0], [1, 1], [0, 1], [-1, 1], [-1, 0], [-1, -1], [0, -1], [1, -1]]
+
+    return function (centerX, centerY) {
+        let result = 0
+        for (let [dx, dy] of directions) {
+            let [x, y] = [centerX, centerY]
+            while (true) {
+                [x, y] = [x + dx, y + dy]
+                let insideGrid = x >= 0 && x < width && y >= 0 && y < height
+                if (insideGrid) {
+                    let visibleValue = grid.get(x, y)
+                    if (visibleValue === occupied) {
+                        ++result
+                        break
+                    } else if (visibleValue === empty) {
+                        break
+                    }
+                } else {
+                    break
+                }
+            }
+        }
+        return result
+    }
+}
+
+solve('A', countImmediateNeighbors, 4, 2)
+
+solve('B', countVisibleNeighbors, 5, 3)
