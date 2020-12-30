@@ -6,12 +6,12 @@ export const directions = [east, south, west, north]
 
 export function turnDirectionIndex(directionIndex, angle) {
     let steps = angleToSteps(angle)
-    return normalizedIndex(
+    return modulo(
         directionIndex + steps,
         directions.length)
 }
 
-function angleToSteps(angle) {
+export function angleToSteps(angle) {
     let result = angle / 90
     if (!Number.isInteger(result)) {
         throw new Error()
@@ -19,6 +19,6 @@ function angleToSteps(angle) {
     return result
 }
 
-function normalizedIndex(directionIndex, range) {
-    return [directionIndex + range] % range
+export function modulo(value, module) {
+    return [value % module + module] % module
 }

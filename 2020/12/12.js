@@ -47,4 +47,4 @@ function solve(context, navigation) {
 
 solve('A', SimpleNavigation())
 
-// solve('B', WaypointNavigation())
+solve('B', WaypointNavigation())
