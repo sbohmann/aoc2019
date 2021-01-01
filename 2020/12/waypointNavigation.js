@@ -3,11 +3,16 @@ import {angleToSteps, east, modulo, north, south, west} from './directions.js'
 export function WaypointNavigation() {
     let x = 0, y = 0
     let waypointX = 10
-    let waypointY = 1
+    let waypointY = -1
 
-    function moveBy(dx, dy, multiples) {
-        x += multiples * dx
-        y += multiples * dy
+    function moveWaypoint(dx, dy, distance) {
+        waypointX += distance * dx
+        waypointY += distance * dy
+    }
+
+    function moveBy(multiples) {
+        x += multiples * waypointX
+        y += multiples * waypointY
     }
 
     function turnBy(angle) {
@@ -36,16 +41,16 @@ export function WaypointNavigation() {
 
     return {
         moveNorth(distance) {
-            moveBy(...north, distance)
+            moveWaypoint(...north, distance)
         },
         moveSouth(distance) {
-            moveBy(...south, distance)
+            moveWaypoint(...south, distance)
         },
         moveEast(distance) {
-            moveBy(...east, distance)
+            moveWaypoint(...east, distance)
         },
         moveWest(distance) {
-            moveBy(...west, distance)
+            moveWaypoint(...west, distance)
         },
         turnLeft(angle) {
             turnBy(-angle)
@@ -54,10 +59,13 @@ export function WaypointNavigation() {
             turnBy(angle)
         },
         moveForward(multiples) {
-            moveBy(waypointX, waypointY, multiples)
+            moveBy(multiples)
         },
         get location() {
             return [x, y]
+        },
+        get waypoint() {
+            return [waypointX, waypointY]
         }
     }
 }
