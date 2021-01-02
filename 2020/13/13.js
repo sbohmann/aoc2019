@@ -56,19 +56,29 @@ function solveB() {
     }
 
     function matchNextBus(nextBus) {
-        let nextInterval = nextBus.interval
-        let offset = nextBus.offset
         let n = minimum
         while (true) {
-            if ((n + offset) % nextInterval === 0) {
-                console.log(n + ':', minimum + ' + ' + ((n - minimum) / currentInterval) + ' * ' + currentInterval + ' + ' + offset + ' = ' + ((n + offset) / nextInterval) + ' * ' + nextInterval)
-                minimum = n
-                currentInterval = mathjs.lcm(currentInterval, nextInterval)
+            if (match(n, nextBus)) {
                 break
             }
             n += currentInterval
         }
         return minimum
+    }
+
+    function match(n, nextBus) {
+        if ((n + nextBus.offset) % nextBus.interval === 0) {
+            reportIntermediateResult(n, nextBus)
+            minimum = n
+            currentInterval = mathjs.lcm(currentInterval, nextBus.interval)
+            return true
+        }
+    }
+
+    function reportIntermediateResult(n, nextBus) {
+        let lhsTerm = minimum + " + " + ((n - minimum) / currentInterval) + " * " + currentInterval + " + " + nextBus.offset
+        let rhsTerm = ((n + nextBus.offset) / nextBus.interval) + " * " + nextBus.interval
+        console.log(n + ":", lhsTerm + " = " + rhsTerm)
     }
 
     determineResult()
