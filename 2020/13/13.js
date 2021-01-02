@@ -4,12 +4,13 @@ let input = readLines('input.txt')
 let startTime = input[0]
 let busses = input[1]
     .split(',')
-    .filter(bus => bus !== 'x')
-    .map(Number)
+    .map((rawValue, index) => ({ rawValue, index }))
+    .filter(bus => bus.rawValue !== 'x')
+    .map(bus => ({ interval: Number(bus.rawValue), offset: bus.index }))
 
 function solveA() {
     let result = busses
-        .map(bus => [bus, calculateWaitingTime(bus)])
+        .map(bus => [bus.interval, calculateWaitingTime(bus.interval)])
         .reduce((minimum, current) => {
             if (minimum === undefined) {
                 return current
@@ -39,21 +40,26 @@ function calculateWaitingTime(bus) {
     return result
 }
 
-solveA()
-
-let [X, Y] = [4, 6]
-let offset = 2
-let n = 0
-let last
-while (n < 1_000) {
-    if (n % X === 0 && (n + offset) % Y === 0) {
-        if (last) {
-            console.log(n, last)
-        } else {
-            console.log(n)
+function solveB() {
+    let minimum = 0
+    let currentInterval = busses[0].interval
+    for (let nextBusIndex = 1; nextBusIndex < busses.length; ++nextBusIndex) {
+        let nextBus = busses[nextBusIndex]
+        let nextInterval = nextBus.interval
+        let offset = nextBus.offset
+        let n = minimum
+        while (true) {
+            if ((n + offset) % nextInterval === 0) {
+                console.log(n + ":", minimum + " + " + ((n - minimum) / currentInterval) + " * " + currentInterval + " + " + offset + " = " + ((n + offset) / nextInterval) + " * " + nextInterval)
+                minimum = n
+                currentInterval *= nextInterval
+                break
+            }
+            n += currentInterval
         }
-        console.log((n / X) + " * X + " + offset + " = " + ((n + offset) / Y) + " * Y")
-        last = n
     }
-    ++n
+    console.log("B:", minimum)
 }
+
+solveA()
+solveB()
