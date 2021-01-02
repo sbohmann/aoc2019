@@ -52,7 +52,7 @@ function solveB() {
         for (let nextBusIndex = 1; nextBusIndex < busses.length; ++nextBusIndex) {
             minimum = matchNextBus(busses[nextBusIndex])
         }
-        console.log('B:', minimum)
+        console.log("B:", minimum)
     }
 
     function matchNextBus(nextBus) {
