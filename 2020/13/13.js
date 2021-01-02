@@ -4,40 +4,43 @@ let input = readLines('input.txt')
 let startTime = input[0]
 let busses = input[1]
     .split(',')
-    .map((rawValue, index) => ({ rawValue, index }))
+    .map((rawValue, index) => ({rawValue, index}))
     .filter(bus => bus.rawValue !== 'x')
-    .map(bus => ({ interval: Number(bus.rawValue), offset: bus.index }))
+    .map(bus => ({interval: Number(bus.rawValue), offset: bus.index}))
 
 function solveA() {
-    let result = busses
-        .map(bus => [bus.interval, calculateWaitingTime(bus.interval)])
-        .reduce((minimum, current) => {
-            if (minimum === undefined) {
-                return current
-            } else {
-                let [, minimumWaitingTime] = minimum
-                let [, currentWaitingTime] = current
-                if (currentWaitingTime < minimumWaitingTime) {
-                    return current
-                } else {
-                    return minimum
-                }
-            }
-        })
-    let [bus, waitingTime] = result
-    console.log('A:', bus * waitingTime, bus, waitingTime)
-}
+    function determineResult() {
+        let {interval, waitingTime} = busses
+            .map(bus => ({interval: bus.interval, waitingTime: calculateWaitingTime(bus.interval)}))
+            .reduce(replaceMinimum)
+        console.log('A:', interval * waitingTime, interval, waitingTime)
+    }
 
-function calculateWaitingTime(bus) {
-    let offset = Math.trunc(startTime / bus) * bus
-    let result = offset - startTime
-    if (result < 0) {
-        result += bus
+    function calculateWaitingTime(bus) {
+        let offset = Math.trunc(startTime / bus) * bus
+        let result = offset - startTime
+        if (result < 0) {
+            result += bus
+        }
+        if (result < 0 || result >= bus) {
+            throw new Error()
+        }
+        return result
     }
-    if (result < 0 || result >= bus) {
-        throw new Error()
+
+    function replaceMinimum(minimum, next) {
+        if (minimum === undefined) {
+            return next
+        } else {
+            if (next.waitingTime < minimum.waitingTime) {
+                return next
+            } else {
+                return minimum
+            }
+        }
     }
-    return result
+
+    determineResult()
 }
 
 function solveB() {
@@ -50,7 +53,7 @@ function solveB() {
         let n = minimum
         while (true) {
             if ((n + offset) % nextInterval === 0) {
-                console.log(n + ":", minimum + " + " + ((n - minimum) / currentInterval) + " * " + currentInterval + " + " + offset + " = " + ((n + offset) / nextInterval) + " * " + nextInterval)
+                console.log(n + ':', minimum + ' + ' + ((n - minimum) / currentInterval) + ' * ' + currentInterval + ' + ' + offset + ' = ' + ((n + offset) / nextInterval) + ' * ' + nextInterval)
                 minimum = n
                 currentInterval *= nextInterval
                 break
@@ -58,7 +61,7 @@ function solveB() {
             n += currentInterval
         }
     }
-    console.log("B:", minimum)
+    console.log('B:', minimum)
 }
 
 solveA()
