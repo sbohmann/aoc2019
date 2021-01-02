@@ -7,12 +7,18 @@ const busses = input[1]
     .split(',')
     .map((rawValue, index) => ({rawValue, index}))
     .filter(bus => bus.rawValue !== 'x')
-    .map(bus => ({interval: Number(bus.rawValue), offset: bus.index}))
+    .map(bus => ({
+        interval: Number(bus.rawValue),
+        offset: bus.index
+    }))
 
 function solveA() {
     function determineResult() {
         let {interval, waitingTime} = busses
-            .map(bus => ({interval: bus.interval, waitingTime: calculateWaitingTime(bus.interval)}))
+            .map(bus => ({
+                interval: bus.interval,
+                waitingTime: calculateWaitingTime(bus.interval)
+            }))
             .reduce(replaceMinimum)
         console.log("A:", interval * waitingTime)
     }
