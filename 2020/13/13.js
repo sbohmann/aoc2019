@@ -1,4 +1,5 @@
 import {readLines} from '../../common/io.js'
+import * as mathjs from 'mathjs'
 
 let input = readLines('input.txt')
 let startTime = input[0]
@@ -46,8 +47,15 @@ function solveA() {
 function solveB() {
     let minimum = 0
     let currentInterval = busses[0].interval
-    for (let nextBusIndex = 1; nextBusIndex < busses.length; ++nextBusIndex) {
-        let nextBus = busses[nextBusIndex]
+
+    function determineResult() {
+        for (let nextBusIndex = 1; nextBusIndex < busses.length; ++nextBusIndex) {
+            minimum = matchNextBus(busses[nextBusIndex])
+        }
+        console.log('B:', minimum)
+    }
+
+    function matchNextBus(nextBus) {
         let nextInterval = nextBus.interval
         let offset = nextBus.offset
         let n = minimum
@@ -55,13 +63,15 @@ function solveB() {
             if ((n + offset) % nextInterval === 0) {
                 console.log(n + ':', minimum + ' + ' + ((n - minimum) / currentInterval) + ' * ' + currentInterval + ' + ' + offset + ' = ' + ((n + offset) / nextInterval) + ' * ' + nextInterval)
                 minimum = n
-                currentInterval *= nextInterval
+                currentInterval = mathjs.lcm(currentInterval, nextInterval)
                 break
             }
             n += currentInterval
         }
+        return minimum
     }
-    console.log('B:', minimum)
+
+    determineResult()
 }
 
 solveA()
