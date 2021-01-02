@@ -14,7 +14,7 @@ function solveA() {
         let {interval, waitingTime} = busses
             .map(bus => ({interval: bus.interval, waitingTime: calculateWaitingTime(bus.interval)}))
             .reduce(replaceMinimum)
-        console.log('A:', interval * waitingTime, interval, waitingTime)
+        console.log("A:", interval * waitingTime, interval, waitingTime)
     }
 
     function calculateWaitingTime(bus) {
