@@ -1,9 +1,9 @@
 import {readLines} from '../../common/io.js'
 import * as mathjs from 'mathjs'
 
-let input = readLines('input.txt')
-let startTime = input[0]
-let busses = input[1]
+const input = readLines('input.txt')
+const startTime = input[0]
+const busses = input[1]
     .split(',')
     .map((rawValue, index) => ({rawValue, index}))
     .filter(bus => bus.rawValue !== 'x')
