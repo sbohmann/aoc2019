@@ -19,7 +19,7 @@ export function year(min, max) {
 export function height(value) {
     function valid() {
         let match = value.match(/(-?\d+(?:\.\d+)?)(cm|in)/)
-        return match && inRange(match[1], match[2])
+        return match && inRange(Number(match[1]), match[2])
     }
 
     function inRange(number, unit) {

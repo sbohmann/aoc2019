@@ -3,9 +3,9 @@ export function GroupIterator(data, groupSize) {
         throw new RangeError('groupSize > data.length')
     }
 
-    let state = initialState(groupSize)
+    let indices = initialIndices(groupSize)
 
-    function incrementIndicesOrFalse() {
+    function incrementIndicesOrReturnFalse() {
         for (let groupIndex = groupSize - 1; groupIndex >= 0; --groupIndex) {
             if (canIncrement(groupIndex)) {
                 increment(groupIndex)
@@ -17,33 +17,33 @@ export function GroupIterator(data, groupSize) {
 
     function canIncrement(groupIndex) {
         let numberOfSubGroupIndices = groupSize - groupIndex
-        return state[groupIndex] < data.length - numberOfSubGroupIndices
+        return indices[groupIndex] < data.length - numberOfSubGroupIndices
     }
 
     function increment(groupIndex) {
-        let newValueForGroupIndex = ++state[groupIndex]
+        let newValueForGroupIndex = ++indices[groupIndex]
         resetSubGroupIndices(groupIndex, newValueForGroupIndex)
     }
 
     function resetSubGroupIndices(groupIndex, newValueForGroupIndex) {
         for (let subGroupIndex = groupIndex + 1; subGroupIndex < groupSize; ++subGroupIndex) {
-            state[subGroupIndex] = ++newValueForGroupIndex
+            indices[subGroupIndex] = ++newValueForGroupIndex
         }
     }
 
     return {
         next() {
-            return incrementIndicesOrFalse()
+            return incrementIndicesOrReturnFalse()
         },
         get() {
-            return state.map(index => data[index])
+            return indices.map(index => data[index])
         }
     }
 }
 
-function initialState(length) {
-    let result = Array(length)
-    for (let index = 0; index < length; ++index) {
+function initialIndices(groupSize) {
+    let result = Array(groupSize)
+    for (let index = 0; index < groupSize; ++index) {
         result[index] = index
     }
     return result
