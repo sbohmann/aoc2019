@@ -1,7 +1,7 @@
 export function year(min, max) {
     function valid(value) {
         return value.match(/\d{4}/) &&
-            valueInRange(value, min, max)
+            valueInRange(value)
     }
 
     function valueInRange(value) {
