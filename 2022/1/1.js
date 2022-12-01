@@ -11,6 +11,14 @@ function partSum(part) {
 
 let max = (a, b) => Math.max(a, b)
 
-let maximum = parts.map(partSum).reduce(max)
+let partSums = parts.map(partSum)
+
+let maximum = partSums.reduce(max)
 
 console.log(maximum)
+
+function updateTopThree(state, value) {
+    // 🤔
+}
+
+let topThree = partSums.reduce(updateTopThree, [])
