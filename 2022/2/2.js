@@ -14,7 +14,7 @@ const Hand = Object.freeze({
     scissors: hand('scissors', 2),
     compare(a, b) {
         // trust me 🤣
-        return (((3 + b.ordinal - a.ordinal) % 3 + 1) % 3 - 1)
+        return (((3 + a.ordinal - b.ordinal) % 3 + 1) % 3 - 1)
     }
 })
 
