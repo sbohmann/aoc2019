@@ -58,7 +58,7 @@ function goal(name, getOpponentHand) {
 }
 
 const Goal = Object.freeze({
-    lose: goal('rock', Hand.weaker()),
+    lose: goal('rock', Hand.weaker),
     draw: goal('paper', hand => hand),
     win: goal('scissors', Hand.stronger)
 })
@@ -77,6 +77,7 @@ function parseGoal(descriptor) {
 }
 
 Object.assign(exports, {
+    Hand,
     parseHand,
     parseGoal
 })

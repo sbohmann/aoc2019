@@ -1,22 +1,6 @@
 const fs = require('fs')
-const {add} = require('../commons.js')
-
-function hand(name, ordinal) {
-    return Object.freeze({
-        name,
-        ordinal
-    })
-}
-
-const Hand = Object.freeze({
-    rock: hand('rock', 0),
-    paper: hand('paper', 1),
-    scissors: hand('scissors', 2),
-    compare(a, b) {
-        // trust me 🤣
-        return (((3 + a.ordinal - b.ordinal) % 3 + 1) % 3 - 1)
-    }
-})
+const {add} = require('../reduce.js')
+const {Hand, parseHand} = require('./common.js')
 
 function resultForLine(line) {
     let match = line.match(/([ABC]) ([XYZ])/)
@@ -26,22 +10,6 @@ function resultForLine(line) {
     let opponentHand = parseHand(match[1])
     let playerHand = parseHand(match[2])
     return evaluateRound(playerHand, opponentHand)
-}
-
-function parseHand(descriptor) {
-    switch (descriptor) {
-        case 'A':
-        case 'X':
-            return Hand.rock
-        case 'B':
-        case 'Y':
-            return Hand.paper
-        case 'C':
-        case 'Z':
-            return Hand.scissors
-        default:
-            throw new RangeError('Unrecognized hand descriptor: ' + descriptor)
-    }
 }
 
 function evaluateRound(playerHand, opponentHand) {
