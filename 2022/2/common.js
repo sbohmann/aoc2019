@@ -110,7 +110,5 @@ function evaluateRound(playerHand, opponentHand) {
 Object.assign(exports, {
     parseHand,
     parseGoal,
-    resultPoints,
-    handPoints,
     evaluateRound
 })
