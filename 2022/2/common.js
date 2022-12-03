@@ -50,10 +50,10 @@ function parseHand(descriptor) {
     }
 }
 
-function goal(name, getOpponentHand) {
+function goal(name, getAchievingHand) {
     return Object.freeze({
         name,
-        getOpponentHand
+        getAchievingHand
     })
 }
 
@@ -76,8 +76,41 @@ function parseGoal(descriptor) {
     }
 }
 
+function resultPoints(playerHand, opponentHand) {
+    let difference = Hand.compare(playerHand, opponentHand)
+    switch (difference) {
+        case -1:
+            return 0
+        case 0:
+            return 3
+        case 1:
+            return 6
+        default:
+            throw new RangeError("Failed to interpret comparison result " + difference)
+    }
+}
+
+function handPoints(playerHand) {
+    switch (playerHand) {
+        case Hand.rock:
+            return 1
+        case Hand.paper:
+            return 2
+        case Hand.scissors:
+            return 3
+        default:
+            throw new RangeError("Unknown hand: " + hand.name)
+    }
+}
+
+function evaluateRound(playerHand, opponentHand) {
+    return resultPoints(playerHand, opponentHand) + handPoints(playerHand)
+}
+
 Object.assign(exports, {
-    Hand,
     parseHand,
-    parseGoal
+    parseGoal,
+    resultPoints,
+    handPoints,
+    evaluateRound
 })
