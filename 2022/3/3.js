@@ -21,7 +21,7 @@ function priority(item) {
     throw new RangeError()
 }
 
-function resultForLine(line) {
+function sharedPriorityForTwoCompartmentLine(line) {
     let result = 0
     let {firstCompartment, secondCompartment} = splitBagCompartments(line)
     let firstCompartmentItems = new Set([...firstCompartment])
@@ -45,10 +45,59 @@ function splitBagCompartments(line) {
     }
 }
 
-let result = fs.readFileSync('input.txt', 'utf-8')
+let result3a = fs.readFileSync('input.txt', 'utf-8')
     .split('\n')
     .filter(line => line.length > 0)
-    .map(resultForLine)
+    .map(sharedPriorityForTwoCompartmentLine)
     .reduce(add)
 
-console.log(result)
+console.log("3a:", result3a)
+
+function lineTriples(lines) {
+    let result = []
+    for (let index = 0; index < lines.length; index += 3) {
+        let triple = []
+        for (let offset = 0; offset < 3; ++offset) {
+            triple.push(lines[index + offset])
+        }
+        result.push(triple)
+    }
+    return result
+}
+
+function priorityOfSharedItem(triple) {
+    let firstTripleItems = new Set([...triple[0]])
+    let secondTripleItems = new Set([...triple[1]])
+    let thirdTripleItems = new Set([...triple[2]])
+    let resultSet = setIntersection(
+        setIntersection(firstTripleItems, secondTripleItems),
+        thirdTripleItems
+    )
+    // if (resultSet.size !== 1) {
+    //     throw new RangeError()
+    // }
+    let result = 0
+    for (let item of resultSet) {
+        result += priority(item)
+    }
+    return result
+}
+
+function setIntersection(a, b) {
+    let result = new Set()
+    for (let element of b) {
+        if (a.has(element)) {
+            result.add(element)
+        }
+    }
+    return result
+}
+
+let result3b = lineTriples(
+    fs.readFileSync('input.txt', 'utf-8')
+        .split('\n')
+        .filter(line => line.length > 0))
+    .map(priorityOfSharedItem)
+    .reduce(add)
+
+console.log("3b:", result3b)
