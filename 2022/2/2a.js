@@ -1,6 +1,6 @@
 const fs = require('fs')
 const {add} = require('../reduce.js')
-const {parseHand, evaluateRound} = require('./common.js')
+const {parseHand, evaluateRound} = require('./rules.js')
 
 function resultForLine(line) {
     let match = line.match(/([ABC]) ([XYZ])/)
