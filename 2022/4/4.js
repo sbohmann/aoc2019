@@ -20,8 +20,8 @@ function lineResult(line) {
 
 function range(first, last) {
     return {
-        first,
-        last,
+        first: Number(first),
+        last: Number(last),
         contains(other) {
             return other.first >= first && other.last <= last
         }
