@@ -20,7 +20,6 @@ function lineResult(line) {
         ++result
     }
     if (result === 2) {
-        console.log(line, result)
         return 1
     }
     return result
