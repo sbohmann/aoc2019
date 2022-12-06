@@ -9,7 +9,7 @@ let result4a =
         .reduce(add)
 
 function lineResult(line) {
-    let match = line.match(/(\d+)-(\d+),(\d+)-(\d+)/)
+    let match = line.match(/^(\d+)-(\d+),(\d+)-(\d+)$/)
     let firstRange = range(match[1], match[2])
     let secondRange = range(match[3], match[4])
     if (firstRange.contains(secondRange) || secondRange.contains(firstRange)) {
