@@ -19,7 +19,7 @@ function lineResult(line) {
     if (secondRange.contains(firstRange)) {
         ++result
     }
-    if (result > 0) {
+    if (result === 2) {
         console.log(line, result)
         return 1
     }
