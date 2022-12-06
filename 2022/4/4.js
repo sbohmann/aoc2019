@@ -12,17 +12,10 @@ function lineResult(line) {
     let match = line.match(/(\d+)-(\d+),(\d+)-(\d+)/)
     let firstRange = range(match[1], match[2])
     let secondRange = range(match[3], match[4])
-    let result = 0
-    if (firstRange.contains(secondRange)) {
-        ++result
-    }
-    if (secondRange.contains(firstRange)) {
-        ++result
-    }
-    if (result === 2) {
+    if (firstRange.contains(secondRange) || secondRange.contains(firstRange)) {
         return 1
     }
-    return result
+    return 0
 }
 
 function range(first, last) {
