@@ -6,7 +6,7 @@ function TabularText(input, step, defaultCellValue = "") {
         .map(line => line.length)
         .reduce(max)
 
-    let numberOfColumnsForLength = length => (length + step - 1) % step
+    let numberOfColumnsForLength = length => Math.floor((length + step - 1) / step)
 
     let width = numberOfColumnsForLength(longestLineLength, step)
     let height = lines.length
@@ -35,6 +35,6 @@ function TabularText(input, step, defaultCellValue = "") {
     }
 }
 
-exports = {
+Object.assign(exports, {
     TabularText
-}
+})

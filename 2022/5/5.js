@@ -1,4 +1,5 @@
 const fs = require('fs')
+const {TabularText} = require('../../common/tabularText.js')
 
 let input =
     fs.readFileSync('input.txt', 'utf-8')
@@ -17,8 +18,8 @@ let numberOfColumns = [...columnMatches].length
 console.log(numberOfColumns)
 
 let map = []
-for (let maoLineIndex = 0; maoLineIndex < mapHeight; ++maoLineIndex) {
-    const line = mapLines[maoLineIndex]
+for (let mapLineIndex = 0; mapLineIndex < mapHeight; ++mapLineIndex) {
+    const line = mapLines[mapLineIndex]
     const columnsInLine = (line.length + 1) / 4
     let row = []
     for (let columnIndex = 0; columnIndex < columnsInLine; ++columnIndex) {
@@ -36,3 +37,11 @@ for (let maoLineIndex = 0; maoLineIndex < mapHeight; ++maoLineIndex) {
 }
 
 console.log(map)
+
+let table = TabularText(input[0], 4)
+console.log(table)
+for (let y = 0; y < table.height; ++y) {
+    for (let x = 0; x < table.width; ++x) {
+        console.log(`[${table.get(x, y)}]`)
+    }
+}
