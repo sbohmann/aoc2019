@@ -10,13 +10,6 @@ if (input.length !== 2) {
 }
 
 let table = TabularText(input[0], 4)
-console.log(table)
-for (let y = 0; y < table.height; ++y) {
-    for (let x = 0; x < table.width; ++x) {
-        console.log(`[${table.get(x, y)}]`)
-    }
-}
-
 let stacks = readStacks()
 console.log(stacks)
 
