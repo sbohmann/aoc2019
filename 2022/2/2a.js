@@ -1,5 +1,5 @@
 const fs = require('fs')
-const {add} = require('../reduce.js')
+const {add} = require('../../common/reduce.js')
 const {parseHand, evaluateRound} = require('./rules.js')
 
 function resultForLine(line) {

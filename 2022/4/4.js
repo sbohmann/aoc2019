@@ -1,5 +1,5 @@
 const fs = require('fs')
-const {add} = require('../reduce')
+const {add} = require('../../common/reduce')
 
 let result4a =
     fs.readFileSync('input.txt', 'utf-8')

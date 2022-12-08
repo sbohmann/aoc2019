@@ -1,5 +1,5 @@
 const fs = require('fs')
-const {add} = require('../reduce')
+const {add} = require('../../common/reduce')
 
 function ordinalItem(item) {
     return item.codePointAt(0)
