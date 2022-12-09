@@ -45,6 +45,8 @@ function parseColumn(x) {
     return stack
 }
 
+const part2 = true; // part 2: multiple crates are moved at once
+
 let commandLines = input[1].split('\n')
 for (let index = 0; index < commandLines.length; ++index) {
     let line = commandLines[index]
@@ -53,10 +55,14 @@ for (let index = 0; index < commandLines.length; ++index) {
     }
     let lineNumber = table.height + 2 + index
     let command = parseCommand(line)
-    executeCommand(command, lineNumber)
+    let execution =
+        (part2
+            ? moveMultipleCrates
+            : moveSingleCrates)
+    execution(command, lineNumber)
 }
 
-let result5a = [...stacks.keys()]
+let result = [...stacks.keys()]
     .sort()
     .map(key => stacks.get(key))
     .map(stack => {
@@ -64,7 +70,7 @@ let result5a = [...stacks.keys()]
     })
     .join('')
 
-console.log(result5a)
+console.log(result)
 
 function parseCommand(line) {
     let match = matchOrFail(line, /move (\d+) from (\d+) to (\d+)/)
@@ -75,7 +81,7 @@ function parseCommand(line) {
     }
 }
 
-function executeCommand(command, lineNumber) {
+function moveSingleCrates(command, lineNumber) {
     for (let index = 0; index < command.number; ++index) {
         let element = stacks.get(command.source).pop()
         if (element === undefined) {
@@ -83,4 +89,10 @@ function executeCommand(command, lineNumber) {
         }
         stacks.get(command.destination).push(element)
     }
+}
+
+function moveMultipleCrates(command) {
+    let source = stacks.get(command.source)
+    let elements = source.splice(source.length - command.number)
+    stacks.get(command.destination).push(...elements)
 }
